@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title imt-translate>ImgOps Reverse Upload</title>  <!-- TODO: Change the title "Your App Name" to something better. -->
+
+    <script src="/system/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="/system/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="/system/animate.css/animate.min.css"/>
+    <link rel="stylesheet" href="/system/bootstrap/dist/css/bootstrap.min.css"/>
+
+    <link rel="stylesheet" href="/system/bootstrap/dist/css/bootstrap-theme.min.css"/>
+
+    <!-- The IMatch and IMWS helper libraries - they make access to IMWS and IMatch very easy -->
+    <script src="/system/imws/imwslib.js"></script>
+    <script src="/system/imatch/imatchlib.js"></script>
+
+</head>
+<body>
+<div class="container">
+    <h1 id="app-name">ImgOps Upload</h1>
+    <p id="info"></p>
+    <div id="status">
+    </div>
+    <div id="result">
+        Status appears here.
+    </div>
+</div>
+
+<script>
+
+
+    $(document).ready(function () {
+
+
+        $('#result').text("");
+        // 1. Get the focused file path for the next step.
+        IMWS.get('v1/files', {
+            // Information about the focused file in the active file window.
+            idlist: IMatch.idlist.fileWindowFocusedFile,
+            fields: 'id,filename,protected',
+            tagurls: 'XMP::prism\\urlUrl\\URLUrl\\0'
+        }).then(function (response) {
+
+            if (response.files.length > 0) {
+
+                var thisFile = response.files[0];
+                $('#result').text(JSON.stringify(thisFile, null, 2));
+                return thisFile.fileName;
+            }
+            else {
+                $('#result').text("No file focused!");
+            }
+        }).then(function (fileSpec) {
+            // TODO: Load exe path from config.
+            return IMatch.processRun({
+                'executable': '"C:\\bat\\imgops-windows-amd64.exe"',
+                'parameters': 'search "' + fileSpec + '"',
+                'showwindow': false,
+                'timeout': 30
+            }).then(function (response) {
+                    if (response.result == 'ok') {
+                        $('#result').text(response.output);
+
+                        // TODO: Close the window.
+                        IMatch.modalClose();
+                    }
+                    else {
+                        $('#result').text(JSON.stringify(response, null, 2));
+                    }
+                },
+                function (error) {
+                    showAnimation(false);
+                    $('#result').text(error.responseText);
+                });
+        });
+
+    });
+</script>
+
+</body>
+</html>

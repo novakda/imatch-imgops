@@ -1,0 +1,24 @@
+{
+  "type": "app",
+  "id": "70212C1D-CA93-47CE-AF4F-D1AEE1FB6037",
+  "version": "1.0",
+  "author": [
+    "Dan Novak"
+  ],
+  "name": {
+    "": "ImgOps Reverse Lookup"
+  },
+  "description": {
+    "": "Opens the focused file on imgops.com, where you can reverse search and do other online processing."
+  },
+  "defaultDocument": "index.html",
+  "icon": {
+    "": "app.png"
+  },
+  "runAs": "modal",
+  "windowSizing": {
+    "sizing": "both",
+    "width": 600,
+    "height": 400
+  }
+}
